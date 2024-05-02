@@ -8,54 +8,12 @@ import twine
 import sphinx
 import sphinx_rtd_theme
 
-build_docs_script = None
-setup_py = None
-sphinx_conf_py = None
-sphinx_modules_rst = None
-sphinx_installation_rst = None
-
-
-# source_name
-files_to_generate: dict[str, Optional[str]] = {
-    "build_docs_script.py": build_docs_script,
-    "setup.py": setup_py,
-    "docs/source/conf.py": sphinx_conf_py,
-    "docs/source/modules.rst": sphinx_modules_rst,
-    "docs/source/main/installation.rst": sphinx_installation_rst
-}
-
 
 def write_filedata(filepath, filedata):
     fp = open(filepath, "w")
     fp.write(filedata)
     fp.close()
 
-def main():
-    done = False
-    while not done:
-        source = input("Enter in the name of the package, in snake_case")
-        answer = input(f"You entered '{source}' is that correct? [y/n]")
-        if answer.lower() == "y":
-            done = True
-
-    # Create basic directory structure
-    os.mkdir(source)
-    write_filedata(os.path.join(source, "__init__.py"), "print(\"Hello, World!\")\n")
-
-    # Write custom files
-    for filepath, file_content in files_to_generate.items():
-        print(f"Writing '{filepath}'..")
-        path = Path(os.path.dirname(filepath))
-        path.mkdir(parents=True, exist_ok=True)
-        write_filedata(filepath, file_content.format(source_name=source))
-
-    print("Done!")
-    tw = 2
-
-    pass
-
-
-# TODO create source folder, generate files above, work on todo list in readme
 
 sphinx_installation_rst = """Installation
 ============
@@ -178,6 +136,40 @@ def main():
 if __name__ == "__main__":
     main()
 """
+
+# source_name
+files_to_generate: dict[str, str] = {
+    "build_docs_script.py": build_docs_script,
+    "setup.py": setup_py,
+    "docs/source/conf.py": sphinx_conf_py,
+    "docs/source/modules.rst": sphinx_modules_rst,
+    "docs/source/main/installation.rst": sphinx_installation_rst
+}
+
+
+def main():
+    done = False
+    while not done:
+        source = input("Enter in the name of the package, in snake_case")
+        answer = input(f"You entered '{source}' is that correct? [y/n]")
+        if answer.lower() == "y":
+            done = True
+
+    # Create basic directory structure
+    os.mkdir(source)
+    write_filedata(os.path.join(source, "__init__.py"), "print(\"Hello, World!\")\n")
+
+    # Write custom files
+    for filepath, file_content in files_to_generate.items():
+        print(f"Writing '{filepath}'..")
+        path = Path(os.path.dirname(filepath))
+        path.mkdir(parents=True, exist_ok=True)
+        write_filedata(filepath, file_content.format(source_name=source))
+
+    print("Done!")
+    tw = 2
+
+    pass
 
 
 if __name__ == "__main__":
