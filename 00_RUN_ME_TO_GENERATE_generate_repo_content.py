@@ -1,4 +1,8 @@
 # Test imports for this script before running it
+import os
+from pathlib import Path
+from typing import Optional
+
 import wheel
 import twine
 import sphinx
@@ -12,13 +16,44 @@ sphinx_installation_rst = None
 
 
 # source_name
-files_to_generate = {
+files_to_generate: dict[str, Optional[str]] = {
     "build_docs_script.py": build_docs_script,
     "setup.py": setup_py,
     "docs/source/conf.py": sphinx_conf_py,
-    "docs/source/modules.rst": sphinx_modules_rst
+    "docs/source/modules.rst": sphinx_modules_rst,
     "docs/source/main/installation.rst": sphinx_installation_rst
 }
+
+
+def write_filedata(filepath, filedata):
+    fp = open(filepath, "w")
+    fp.write(filedata)
+    fp.close()
+
+def main():
+    done = False
+    while not done:
+        source = input("Enter in the name of the package, in snake_case")
+        answer = input(f"You entered '{source}' is that correct? [y/n]")
+        if answer.lower() == "y":
+            done = True
+
+    # Create basic directory structure
+    os.mkdir(source)
+    write_filedata(os.path.join(source, "__init__.py"), "print(\"Hello, World!\")\n")
+
+    # Write custom files
+    for filepath, file_content in files_to_generate.items():
+        print(f"Writing '{filepath}'..")
+        path = Path(os.path.dirname(filepath))
+        path.mkdir(parents=True, exist_ok=True)
+        write_filedata(filepath, file_content.format(source_name=source))
+
+    print("Done!")
+    tw = 2
+
+    pass
+
 
 # TODO create source folder, generate files above, work on todo list in readme
 
@@ -30,18 +65,18 @@ Install with the pip package on pypi by using the command
 
 .. code-block:: bash
 
-    pip install {{source_name}}
+    pip install {source_name}
 
 """
 
 
-sphinx_modules_rst = """{{source_name}}
+sphinx_modules_rst = """{source_name}
 ==========
 
 .. toctree::
    :maxdepth: 4
 
-   {{source_name}}
+   {source_name}
 
 """
 
@@ -54,7 +89,7 @@ sphinx_conf_py = """# Configuration file for the Sphinx documentation builder.
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = '{{source_name}}'
+project = '{source_name}'
 copyright = 'Spencer Hanson'
 author = 'Spencer Hanson'
 
@@ -99,7 +134,7 @@ with open('./README.rst') as f:
 
 
 setup(
-    name='{{source_name}}',
+    name='{source_name}',
     packages=find_packages(),
     version=VERSION,
     description='TODO edit me',
@@ -124,7 +159,7 @@ def main():
     subprocess.run(["make.bat", "clean"])
 
     print("Generating API docs..")
-    subprocess.run(["sphinx-apidoc", "-o", "source",  "../{{source_name}}", "-f"])
+    subprocess.run(["sphinx-apidoc", "-o", "source",  "../{source_name}", "-f"])
 
     print("Generating HTML docs..")
 
@@ -143,3 +178,7 @@ def main():
 if __name__ == "__main__":
     main()
 """
+
+
+if __name__ == "__main__":
+    main()
