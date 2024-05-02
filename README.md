@@ -5,9 +5,9 @@ Template repo for making a pypi package
 # Repo setup checklist
 - [ ] Set up venv and install packages in `dev-requirements.txt`
 - [ ] Run the generate script `00_RUN_ME_TO_GENERATE_generate_repo_content.py`
-- [ ] Edit read the docs link and update docs
-- [ ] Tests and Examples
-- [ ] Initial run and publish of the package
+- [ ] Add on [ReadTheDocs](https://readthedocs.org) and add content
+- [ ] Add Tests and Examples
+- [ ] Initial `build_package_script.py` and `publish_package.py` of the package!
 
 # USER GUIDE -> \*\*Read-The-Docs!\*\* [Link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
