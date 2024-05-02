@@ -15,6 +15,51 @@ def write_filedata(filepath, filedata):
     fp.close()
 
 
+publish_package = """import sys
+import os
+from twine.__main__ import main as twine_main
+
+
+def main():
+    \"\"\"
+    If your upload is giving HTTPError: 403 Forbidden ...
+    You need to format your .pypirc file like the following..
+
+    [distutils]
+    index-servers =
+      pypi
+      {source_name}
+
+    [pypi]
+    username = __token__
+    password = pypi-...<default pypi token you want to use>
+
+
+    [{source_name}]
+    repository = https://upload.pypi.org/legacy/
+    username = __token__
+    password = pypi-...<project specific token here>
+    \"\"\"
+    pypirc_file = os.path.expanduser('~/.pypirc')
+    if not os.path.exists(pypirc_file):
+        # See https://packaging.python.org/en/latest/specifications/pypirc/ for help
+        raise ValueError("Must have a .pypirc file to upload a package to PyPi! See https://packaging.python.org/en/latest/specifications/pypirc/ for more information")
+
+    sys.argv = [
+        sys.argv[0],
+        "upload",
+        "-r",
+        "{source_name}",
+        "dist/*"
+    ]
+    twine_main()
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+
 sphinx_installation_rst = """Installation
 ============
 
@@ -98,6 +143,7 @@ setup(
     description='TODO edit me',
     author='Spencer Hanson',
     long_description=long_description,
+    url="https://github.com/spencer-hanson/" CHANGE ME!!
     install_requires=parse_requirements('requirements.txt'),
     keywords=[],
     classifiers=[
@@ -140,6 +186,7 @@ if __name__ == "__main__":
 # source_name
 files_to_generate: dict[str, str] = {
     "build_docs_script.py": build_docs_script,
+    "publish_package.py": publish_package,
     "setup.py": setup_py,
     "docs/source/conf.py": sphinx_conf_py,
     "docs/source/modules.rst": sphinx_modules_rst,
